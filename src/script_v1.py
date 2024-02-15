@@ -116,7 +116,7 @@ def send_farm_lists(driver, num_farm_lists=2):
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(5, 8))
 
-    buttons = driver.find_elements(By.XPATH, '//button[contains(@class, "textButtonV2")]')
+    buttons = driver.find_elements(By.XPATH, '//button[contains(@class, "startFarmList")]')
     num_farm_lists = min(num_farm_lists, len(buttons))
 
     # first button is executed every time, while second button is executed every 2nd time
