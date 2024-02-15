@@ -14,6 +14,9 @@ import requests
 import logging
 import os
 
+
+stable_count = 0
+
 name = "MyLogger"
 logger = logging.getLogger(name)
 logger.setLevel(logging.INFO)
@@ -87,12 +90,28 @@ def login(driver, username, password):
     sleep(random.uniform(7, 10))
 
 
+def train_unit(driver):
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_STABLE'))
+    sleep(random.uniform(3.7, 6))
+
+    input_element = driver.find_element(By.NAME, 't5')
+    input_element.clear()
+    sleep(random.uniform(0.4, 1))
+    input_element.send_keys('1')
+    sleep(random.uniform(0.5, 1.5))
+
+    start_training_button = driver.find_element(By.XPATH, '//button[contains(@class, "startTraining")]')
+    start_training_button.click()
+    sleep(random.uniform(1.3, 3.6))
+
+
 def send_farm_lists(driver, num_farm_lists=1):
+    global stable_count
+
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_SERVER'))
     sleep(random.uniform(1, 3))
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_SERVER'))
-    sleep_time_1 = random.uniform(5, 8)
-    sleep(sleep_time_1)
+    sleep(random.uniform(5, 8))
 
     buttons = driver.find_elements(By.XPATH, '//button[contains(@class, "textButtonV2")]')
     num_farm_lists = min(num_farm_lists, len(buttons))
@@ -101,15 +120,19 @@ def send_farm_lists(driver, num_farm_lists=1):
         button = buttons[i]
         button.click()
         log(f"Farm list {i + 1} is sent.")
-        sleep(random.uniform(3, 5))
+        sleep(random.uniform(1.3, 3.6))
 
-    sleep_time_2 = random.uniform(3.1, 4.1)
-    sleep(sleep_time_2)
+    if stable_count == 5:
+        train_unit(driver)
+        stable_count = 0
+    else:
+        stable_count += 1
+
+    sleep(random.uniform(3.1, 4.1))
     driver.get('https://google.com')
-    sleep_time_3 = random.uniform(402, 416)
-    log(f"Script executed! {round(sleep_time_1 + sleep_time_2 + sleep_time_3, 2)} seconds.")
-    send_telegram_message(f"Script executed! {round(sleep_time_1 + sleep_time_2 + sleep_time_3, 2)} seconds.")
-    sleep(sleep_time_3)
+    log("Script executed!")
+    send_telegram_message("Script executed!")
+    sleep(random.uniform(401, 415))
 
 
 # Setup driver
