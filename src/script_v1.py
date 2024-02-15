@@ -123,9 +123,34 @@ def send_farm_lists(driver, num_farm_lists=2):
     for i in range(num_farm_lists):
         if i == 0 or (i == 1 and farm_list_send_count % 2 == 0):
             button = buttons[i]
+            scroll_time = random.uniform(0.5, 1.5) * 1000
+            driver.execute_script(f"""
+                var element = arguments[0];
+                var box = element.getBoundingClientRect();
+                var body = document.body;
+                var docEl = document.documentElement;
+                var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+                var clientTop = docEl.clientTop || body.clientTop || 0;
+                var top  = box.top +  scrollTop - clientTop;
+                var currenTop = window.pageYOffset || document.documentElement.scrollTop;
+                var start = null;
+                requestAnimationFrame(function step(timestamp) {{
+                    if (!start) start = timestamp;
+                    var progress = timestamp - start;
+                    if (currenTop < top) {{
+                        window.scrollTo(0, ((top - currenTop) * progress / {scroll_time}) + currenTop);
+                    }} else {{
+                        window.scrollTo(0, currenTop - ((currenTop - top) * progress / {scroll_time}));
+                    }}
+                    if (progress < {scroll_time}) {{
+                        requestAnimationFrame(step);
+                    }}
+                }});
+            """, button)
+            sleep(scroll_time / 1000 + random.uniform(0.2, 0.4))
             button.click()
             log(f"Farm list {i + 1} is sent.")
-            sleep(random.uniform(1.3, 3.6))
+            sleep(random.uniform(2.7, 4.3))
 
     if farm_list_send_count % 2 == 0:
         farm_list_send_count = 0
