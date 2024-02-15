@@ -14,9 +14,9 @@ import requests
 import logging
 import os
 
-
 stable_count = 1
 farm_list_send_count = 1
+attack_exists = False
 
 name = "MyLogger"
 logger = logging.getLogger(name)
@@ -65,6 +65,7 @@ def setup_driver():
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-popup-blocking")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver.maximize_window()
     log("Starting script...")
     return driver
 
@@ -110,13 +111,15 @@ def train_unit(driver):
 def send_farm_lists(driver, num_farm_lists=2):
     global stable_count
     global farm_list_send_count
+    global attack_exists
 
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(1, 3))
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
-    sleep(random.uniform(5, 8))
+    sleep(random.uniform(4.5, 7.5))
 
-    buttons = driver.find_elements(By.XPATH, '//div[contains(@class, "farmListHeader")]/button[contains(@class, "startFarmList")]')
+    buttons = driver.find_elements(By.XPATH,
+                                   '//div[contains(@class, "farmListHeader")]/button[contains(@class, "startFarmList")]')
     num_farm_lists = min(num_farm_lists, len(buttons))
 
     # first button is executed every time, while second button is executed every 2nd time
@@ -162,10 +165,23 @@ def send_farm_lists(driver, num_farm_lists=2):
     else:
         stable_count += 1
 
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_VILLAGE_STATISTICS_URL'))
+    try:
+        driver.find_element(By.XPATH, '//img[contains(@class, "att1")]')
+        attack_exists = True
+    except NoSuchElementException:
+        attack_exists = False
+
     sleep(random.uniform(3.1, 4.1))
     driver.get('https://google.com')
     log("Script executed!")
-    send_telegram_message("Script executed!")
+
+    if attack_exists:
+        send_telegram_message(u'\u2757\u2757' + " Someone attacked you " + u'\u2757\u2757')
+        attack_exists = False
+    else:
+        send_telegram_message(u'\u2705\u2705' + " No one attacked you " + u'\u2705\u2705')
+
     farm_list_send_count += 1
     sleep(random.uniform(401, 415))
 

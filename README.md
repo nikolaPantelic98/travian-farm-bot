@@ -8,6 +8,7 @@ Welcome to Travian Farm Bot. This script will fully automate your farming/rading
 - Automatic train units in the stable.
 - Storing all logs in the text editor.
 - Telegram API that sends logs to you mobile phone.
+- Send messages to telegram if your villages are under attack
 
 ## Requirements
 
@@ -17,6 +18,7 @@ Welcome to Travian Farm Bot. This script will fully automate your farming/rading
 - webdriver-manager
 - Google Chrome browser (to use others you need to change source code)
 - Linux (**This script currently only works on Linux OS**)
+- Telegram mobile app
 
 ## Installation
 
@@ -64,6 +66,7 @@ export TRAVIAN_FARM_BOT_STABLE_URL=[full https address of your stable page]
 export TRAVIAN_FARM_BOT_LOG_PATH=[final path to your log folder]
 export TRAVIAN_FARM_BOT_TELEGRAM_MESSAGE_TOKEN=[token that you recieved from FatherBot]
 export TRAVIAN_FARM_BOT_TELEGRAM_MESSAGE_CHAT_ID=[your telegram chat id]
+export TRAVIAN_FARM_BOT_VILLAGE_STATISTICS_URL=[full https address of your village statistics - eye icon above the name of the villages]
 ```
 
 * Start the script:
