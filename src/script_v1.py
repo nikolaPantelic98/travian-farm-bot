@@ -15,7 +15,8 @@ import logging
 import os
 
 
-stable_count = 0
+stable_count = 1
+farm_list_send_count = 1
 
 name = "MyLogger"
 logger = logging.getLogger(name)
@@ -105,8 +106,10 @@ def train_unit(driver):
     sleep(random.uniform(1.3, 3.6))
 
 
-def send_farm_lists(driver, num_farm_lists=1):
+# number of farm lists (buttons) is 2
+def send_farm_lists(driver, num_farm_lists=2):
     global stable_count
+    global farm_list_send_count
 
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(1, 3))
@@ -116,15 +119,21 @@ def send_farm_lists(driver, num_farm_lists=1):
     buttons = driver.find_elements(By.XPATH, '//button[contains(@class, "textButtonV2")]')
     num_farm_lists = min(num_farm_lists, len(buttons))
 
+    # first button is executed every time, while second button is executed every 2nd time
     for i in range(num_farm_lists):
-        button = buttons[i]
-        button.click()
-        log(f"Farm list {i + 1} is sent.")
-        sleep(random.uniform(1.3, 3.6))
+        if i == 0 or (i == 1 and farm_list_send_count % 2 == 0):
+            button = buttons[i]
+            button.click()
+            log(f"Farm list {i + 1} is sent.")
+            sleep(random.uniform(1.3, 3.6))
 
+    if farm_list_send_count % 2 == 0:
+        farm_list_send_count = 0
+
+    # train unit every 5th time
     if stable_count == 5:
         train_unit(driver)
-        stable_count = 0
+        stable_count = 1
     else:
         stable_count += 1
 
@@ -132,6 +141,7 @@ def send_farm_lists(driver, num_farm_lists=1):
     driver.get('https://google.com')
     log("Script executed!")
     send_telegram_message("Script executed!")
+    farm_list_send_count += 1
     sleep(random.uniform(401, 415))
 
 

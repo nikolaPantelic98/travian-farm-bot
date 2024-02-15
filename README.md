@@ -74,10 +74,10 @@ python3 script_v1.py
 
 ## Additional information
 
-- This script sends attacks approximately every 7 minutes. To change the script execution time, it is necessary to modify the source code. It is recommended that you stick to random numbers.
+- This script sends attacks approximately every 7 minutes for the first farm list and every 14 minutes for the second farm list. To change the script execution time, it is necessary to modify the source code. It is recommended that you stick to random numbers.
 - This script trains units in the stable after every 5th time sending a farm list. To change this, you need to change the source code on line 125.
 - This script only works with Google Chrome browser. In order to change the browser that selenium uses, it is necessary to modify the source code.
-- This script executes only the first farm list in a row. In order for more farm lists to be executed, it is necessary to indicate in the source code `num_farm_lists=[your_number]` in the line 108.
+- This script executes only the first and second farm list in a row. In order for more farm lists to be executed, it is necessary to indicate in the source code `num_farm_lists=[your_number]` in the line 108.
 
 
 **Note: The use of this script is against the official rule of the online browser game Travian. The use of this script may cause actions against your account and it is recommended that it be used only for educational purposes. As a developer, I am not responsible for any damage caused by this script.**
