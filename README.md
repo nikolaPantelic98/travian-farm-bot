@@ -5,6 +5,7 @@ Welcome to Travian Farm Bot. This script will fully automate your farming/rading
 ## Features
 
 - Efficiently send all your farm lists 24/7.
+- Automatic train units in the stable.
 - Storing all logs in the text editor.
 - Telegram API that sends logs to you mobile phone.
 
@@ -49,7 +50,7 @@ sudo pip3 install selenium
 sudo pip3 install webdriver-manager
 ```
 
-* Install telegram mobile app and make 2 bots:
+* Install telegram mobile app and make one bot:
   - Find BotFather.
   - write `/newbot`.
   - save your token.
@@ -58,7 +59,8 @@ sudo pip3 install webdriver-manager
 ```
 export TRAVIAN_FARM_BOT_USERNAME=
 export TRAVIAN_FARM_BOT_PASSWORD=
-export TRAVIAN_FARM_BOT_SERVER=[full https address]
+export TRAVIAN_FARM_BOT_FARM_LIST_URL=[full https address of your farm list page]
+export TRAVIAN_FARM_BOT_STABLE_URL=[full https address of your stable page]
 export TRAVIAN_FARM_BOT_LOG_PATH=[final path to your log folder]
 export TRAVIAN_FARM_BOT_TELEGRAM_MESSAGE_TOKEN=[token that you recieved from FatherBot]
 export TRAVIAN_FARM_BOT_TELEGRAM_MESSAGE_CHAT_ID=[your telegram chat id]
@@ -73,8 +75,9 @@ python3 script_v1.py
 ## Additional information
 
 - This script sends attacks approximately every 7 minutes. To change the script execution time, it is necessary to modify the source code. It is recommended that you stick to random numbers.
+- This script trains units in the stable after every 5th time sending a farm list. To change this, you need to change the source code on line 125.
 - This script only works with Google Chrome browser. In order to change the browser that selenium uses, it is necessary to modify the source code.
-- This script executes only the first farm list in a row. In order for more farm lists to be executed, it is necessary to indicate in the source code `num_farm_lists=[your_number]` in the line 117.
+- This script executes only the first farm list in a row. In order for more farm lists to be executed, it is necessary to indicate in the source code `num_farm_lists=[your_number]` in the line 108.
 
 
 **Note: The use of this script is against the official rule of the online browser game Travian. The use of this script may cause actions against your account and it is recommended that it be used only for educational purposes. As a developer, I am not responsible for any damage caused by this script.**

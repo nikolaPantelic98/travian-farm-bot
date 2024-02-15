@@ -69,7 +69,7 @@ def setup_driver():
 
 
 def login(driver, username, password):
-    driver.get(os.environ.get('TRAVIAN_FARM_BOT_SERVER'))
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(2, 4))
 
     username_field = driver.find_element(By.NAME, 'name')
@@ -91,7 +91,7 @@ def login(driver, username, password):
 
 
 def train_unit(driver):
-    driver.get(os.environ.get('TRAVIAN_FARM_BOT_STABLE'))
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_STABLE_URL'))
     sleep(random.uniform(3.7, 6))
 
     input_element = driver.find_element(By.NAME, 't5')
@@ -108,9 +108,9 @@ def train_unit(driver):
 def send_farm_lists(driver, num_farm_lists=1):
     global stable_count
 
-    driver.get(os.environ.get('TRAVIAN_FARM_BOT_SERVER'))
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(1, 3))
-    driver.get(os.environ.get('TRAVIAN_FARM_BOT_SERVER'))
+    driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(5, 8))
 
     buttons = driver.find_elements(By.XPATH, '//button[contains(@class, "textButtonV2")]')
