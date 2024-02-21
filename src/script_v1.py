@@ -88,12 +88,12 @@ def login(driver, username, password):
 
     login_button = driver.find_element(By.XPATH, '//button[contains(@class, "textButtonV1")]')
     login_button.click()
-    sleep(random.uniform(7, 10))
+    sleep(random.uniform(7, 10))  # todo: change the time (less)
 
 
 def train_unit(driver):
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_STABLE_URL'))
-    sleep(random.uniform(3.7, 6))
+    sleep(random.uniform(3.7, 6)) # todo: change the time (less)
 
     input_element = driver.find_element(By.NAME, 't5')
     input_element.clear()
@@ -107,51 +107,62 @@ def train_unit(driver):
 
 
 # number of farm lists (buttons) is 2
-def send_farm_lists(driver, num_farm_lists=2):
+def send_farm_lists(driver):
     global stable_count
     global farm_list_send_count
 
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
     sleep(random.uniform(1, 3))
     driver.get(os.environ.get('TRAVIAN_FARM_BOT_FARM_LIST_URL'))
-    sleep(random.uniform(4.5, 7.5))
+    sleep(random.uniform(3, 5))
 
-    buttons = driver.find_elements(By.XPATH,
-                                   '//div[contains(@class, "farmListHeader")]/button[contains(@class, "startFarmList")]')
-    num_farm_lists = min(num_farm_lists, len(buttons))
+    num_villages = 1
+    farm_lists_per_village = [2, 1]
 
-    # first button is executed every time, while second button is executed every 2nd time
-    for i in range(num_farm_lists):
-        if i == 0 or (i == 1 and farm_list_send_count % 2 == 0):
-            button = buttons[i]
-            scroll_time = random.uniform(0.5, 1.5) * 1000
-            driver.execute_script(f"""
-                var element = arguments[0];
-                var box = element.getBoundingClientRect();
-                var body = document.body;
-                var docEl = document.documentElement;
-                var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-                var clientTop = docEl.clientTop || body.clientTop || 0;
-                var top  = box.top +  scrollTop - clientTop;
-                var currenTop = window.pageYOffset || document.documentElement.scrollTop;
-                var start = null;
-                requestAnimationFrame(function step(timestamp) {{
-                    if (!start) start = timestamp;
-                    var progress = timestamp - start;
-                    if (currenTop < top) {{
-                        window.scrollTo(0, ((top - currenTop) * progress / {scroll_time}) + currenTop);
-                    }} else {{
-                        window.scrollTo(0, currenTop - ((currenTop - top) * progress / {scroll_time}));
-                    }}
-                    if (progress < {scroll_time}) {{
-                        requestAnimationFrame(step);
-                    }}
-                }});
-            """, button)
-            sleep(scroll_time / 1000 + random.uniform(0.2, 0.4))
-            button.click()
-            log(f"Farm list {i + 1} is sent.")
-            sleep(random.uniform(2.7, 4.3))
+    villages = driver.find_elements(By.XPATH, '//div[contains(@class, "villageWrapper")]')
+    num_villages = min(num_villages, len(villages))
+
+    # iterate through all villages that have farm lists set up
+    for village_index in range(num_villages):
+        village = villages[village_index]
+
+        num_farm_lists = farm_lists_per_village[village_index]
+
+        farm_lists = village.find_elements(By.XPATH, './/div[contains(@class, "farmListHeader")]/button[contains(@class, "startFarmList")]')
+        num_farm_lists = min(num_farm_lists, len(farm_lists))
+
+        # first button is executed every time, while second button is executed every 2nd time
+        for farm_list_index in range(num_farm_lists):
+            if farm_list_index == 0 or (farm_list_index == 1 and farm_list_send_count % 2 == 0):
+                farm_list = farm_lists[farm_list_index]
+                scroll_time = random.uniform(0.5, 1.5) * 1000
+                driver.execute_script(f"""
+                    var element = arguments[0];
+                    var box = element.getBoundingClientRect();
+                    var body = document.body;
+                    var docEl = document.documentElement;
+                    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+                    var clientTop = docEl.clientTop || body.clientTop || 0;
+                    var top  = box.top +  scrollTop - clientTop;
+                    var currenTop = window.pageYOffset || document.documentElement.scrollTop;
+                    var start = null;
+                    requestAnimationFrame(function step(timestamp) {{
+                        if (!start) start = timestamp;
+                        var progress = timestamp - start;
+                        if (currenTop < top) {{
+                            window.scrollTo(0, ((top - currenTop) * progress / {scroll_time}) + currenTop);
+                        }} else {{
+                            window.scrollTo(0, currenTop - ((currenTop - top) * progress / {scroll_time}));
+                        }}
+                        if (progress < {scroll_time}) {{
+                            requestAnimationFrame(step);
+                        }}
+                    }});
+                """, farm_list)
+                sleep(scroll_time / 1000 + random.uniform(0.2, 0.4))
+                farm_list.click()
+                log(f"Farm list {farm_list_index + 1} is sent.")
+                sleep(random.uniform(2.7, 4.3))
 
     if farm_list_send_count % 2 == 0:
         farm_list_send_count = 0
@@ -179,8 +190,12 @@ def send_farm_lists(driver, num_farm_lists=2):
     log("Script executed!")
 
     if number_of_villages_attacked > 0:
-        village_message = " " + str(number_of_villages_attacked) + " village is attacked " if number_of_villages_attacked == 1 else " " + str(number_of_villages_attacked) + " villages are attacked "
-        attack_message = " There is " + str(total_attacks) + " total attack " if total_attacks == 1 else " There are " + str(total_attacks) + " total attacks "
+        village_message = " " + str(
+            number_of_villages_attacked) + " village is attacked " if number_of_villages_attacked == 1 else " " + str(
+            number_of_villages_attacked) + " villages are attacked "
+        attack_message = " There is " + str(
+            total_attacks) + " total attack " if total_attacks == 1 else " There are " + str(
+            total_attacks) + " total attacks "
 
         send_telegram_message(u'\u2757\u2757' + " Someone attacked you " + u'\u2757\u2757' + "\n"
                               + u'\u2757\u2757' + village_message + u'\u2757\u2757' + "\n"
